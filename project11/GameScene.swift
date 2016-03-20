@@ -11,31 +11,37 @@ import SpriteKit
 class GameScene: SKScene {
     override func didMoveToView(view: SKView) {
         /* Setup your scene here */
-        let myLabel = SKLabelNode(fontNamed:"Chalkduster")
-        myLabel.text = "Hello, World!"
-        myLabel.fontSize = 45
-        myLabel.position = CGPoint(x:CGRectGetMidX(self.frame), y:CGRectGetMidY(self.frame))
+        let background = SKSpriteNode(imageNamed: "background")
+        background.position = CGPoint(x: 512, y: 384)
+        background.blendMode = .Replace
+        background.zPosition = -1
+        addChild(background)
+        physicsBody = SKPhysicsBody(edgeLoopFromRect: frame)
         
-        self.addChild(myLabel)
+        makeBouncerAt(CGPoint(x: 0, y: 0))
+        makeBouncerAt(CGPoint(x: 256, y: 0))
+        makeBouncerAt(CGPoint(x: 512, y: 0))
+        makeBouncerAt(CGPoint(x: 768, y: 0))
+        makeBouncerAt(CGPoint(x: 1024, y: 0))
+    }
+    
+    func makeBouncerAt(position: CGPoint) {
+        let bouncer = SKSpriteNode(imageNamed: "bouncer")
+        bouncer.position = position
+        bouncer.physicsBody = SKPhysicsBody(circleOfRadius: bouncer.size.width / 2.0)
+        bouncer.physicsBody!.dynamic = false
+        addChild(bouncer)
     }
     
     override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
        /* Called when a touch begins */
-        
-        for touch in touches {
+        if let touch = touches.first {
             let location = touch.locationInNode(self)
-            
-            let sprite = SKSpriteNode(imageNamed:"Spaceship")
-            
-            sprite.xScale = 0.5
-            sprite.yScale = 0.5
-            sprite.position = location
-            
-            let action = SKAction.rotateByAngle(CGFloat(M_PI), duration:1)
-            
-            sprite.runAction(SKAction.repeatActionForever(action))
-            
-            self.addChild(sprite)
+            let ball = SKSpriteNode(imageNamed: "ballRed")
+            ball.physicsBody = SKPhysicsBody(circleOfRadius: ball.size.width/2.0)
+            ball.physicsBody!.restitution = 0.4
+            ball.position = location
+            addChild(ball)
         }
     }
    
